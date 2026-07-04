@@ -1,318 +1,465 @@
-# Welcome to your Rork app
+# MilkConnect — Dairy Delivery Platform
 
-## Project info
+A full-stack mobile app that connects customers with local dairy farms for fresh milk and dairy product delivery, featuring Swiggy-style real-time live tracking, subscriptions, inventory, and finance management. Built with React Native + Expo and Firebase.
 
-This is a native cross-platform mobile app created with [Rork](https://rork.com)
 
-**Platform**: Native iOS & Android app, exportable to web
-**Framework**: Expo Router + React Native
 
-## How can I edit this code?
+---
 
-There are several ways of editing your native mobile application.
+## Table of Contents
 
-### **Use Rork**
+- [Overview](#overview)
+- [Key Features](#key-features)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Environment Variables](#environment-variables)
+- [Authentication Flow](#authentication-flow)
+- [Customer App](#customer-app)
+- [Milkman App](#milkman-app)
+- [Real-Time Delivery Tracking (Swiggy-style)](#real-time-delivery-tracking-swiggy-style)
+- [Maps & Location Services](#maps--location-services)
+- [Backend Integration (Firebase)](#backend-integration-firebase)
+- [Data Models](#data-models)
+- [State Management](#state-management)
+- [Scripts](#scripts)
+- [Building & Deploying](#building--deploying)
+- [Configuration Files](#configuration-files)
+- [Troubleshooting](#troubleshooting)
+- [Roadmap](#roadmap)
+- [License](#license)
 
-Simply visit [rork.com](https://rork.com) and prompt to build your app with AI.
+---
 
-Changes made via Rork will be committed automatically to this GitHub repo.
+## Overview
 
-Whenever you make a change in your local code editor and push it to GitHub, it will be also reflected in Rork.
+MilkConnect is a two-sided marketplace mobile app for daily dairy deliveries. It serves two user types:
 
-### **Use your preferred code editor**
+1. **Customers** — browse nearby Chandigarh dairy farms, subscribe to milk/dairy products, place one-time orders, and track their milkman's live location on a map in real time (just like Swiggy/Zomato food delivery tracking).
+2. **Milkmen (Dairy owners)** — manage their dairy business: dashboard with stats, customer list, delivery schedule, inventory management, and finance/revenue reports.
 
-If you want to work locally using your own code editor, you can clone this repo and push changes. Pushed changes will also be reflected in Rork.
+The app currently ships with seeded **Chandigarh dairy data** (Verka, Sharma Dairy, etc.) and a service layer that can run against mock data or a live Firebase Firestore backend. Authentication is OTP-based (demo OTP flow) with role selection (Customer / Milkman).
 
-If you are new to coding and unsure which editor to use, we recommend Cursor. If you're familiar with terminals, try Claude Code.
+---
 
-The only requirement is having Node.js & Bun installed - [install Node.js with nvm](https://github.com/nvm-sh/nvm) and [install Bun](https://bun.sh/docs/installation)
+## Key Features
 
-Follow these steps:
+### Customer
+- OTP login with role selection
+- Home dashboard with quick actions and active deliveries
+- **Find Milkmen** — browse Chandigarh dairies sorted by distance, ratings, products, working hours
+- **Subscriptions** — daily/alternate-day/weekly milk subscriptions, pause/resume/cancel
+- **One-time orders** — order milk, curd, paneer, ghee, lassi, etc.
+- **Real-time delivery tracking** — live map showing the milkman's current location, route to your address, remaining distance, and ETA (Swiggy-style)
+- Profile management with multiple saved addresses
+- Notifications for delivery reminders, payment dues, and order status
 
-```bash
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### Milkman (Dairy Owner)
+- OTP login with role selection
+- **Dashboard** — today's stats (deliveries, revenue, customers, pending), quick navigation
+- **Deliveries** — list of today's deliveries with customer details, map view, mark delivered / not home / cancelled, proof photos
+- **Customers** — full customer list with subscription details and order history
+- **Inventory** — products with current stock, low-stock alerts, add/edit products, cost vs selling price
+- **Reports / Finance** — revenue charts, expense tracking (procurement, fuel, salary, etc.), profit/loss, daily/weekly/monthly breakdowns
+- Profile & business settings (service area, working hours, bank details)
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### Platform
+- Cross-platform: iOS, Android, and Web
+- Real-time GPS location via `expo-location`
+- Route calculation with distance & duration (OSRM-compatible)
+- Geocoding (address → coordinates) via Nominatim/OpenStreetMap
+- Firebase Firestore backend (with mock-data fallback)
+- File-based routing with Expo Router
+- Type-safe with TypeScript strict mode
+- Haptics, blur effects, and native UI components
 
-# Step 3: Install the necessary dependencies.
-bun i
+---
 
-# Step 4: Start the instant web preview of your Rork app in your browser, with auto-reloading of your changes
-bun run start-web
+## Tech Stack
 
-# Step 5: Start iOS preview
-# Option A (recommended):
-bun run start  # then press "i" in the terminal to open iOS Simulator
-# Option B (if supported by your environment):
-bun run start -- --ios
-```
+| Layer | Technology |
+|-------|-----------|
+| Framework | React Native 0.81 + Expo SDK 54 |
+| Language | TypeScript 5.9 (strict) |
+| Routing | Expo Router 6 (file-based) |
+| Backend | Firebase (Firestore, Auth, Storage) |
+| Maps | `react-native-maps` + `expo-location` |
+| State | React Query + `@nkzw/create-context-hook` + AsyncStorage |
+| Icons | `lucide-react-native` + `@expo/vector-icons` |
+| Validation | Zod |
+| Animations | React Native Animated API |
+| Package Manager | Bun |
+| Build | Rork CLI / EAS |
 
-### **Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-## What technologies are used for this project?
-
-This project is built with the most popular native mobile cross-platform technical stack:
-
-- **React Native** - Cross-platform native mobile development framework created by Meta and used for Instagram, Airbnb, and lots of top apps in the App Store
-- **Expo** - Extension of React Native + platform used by Discord, Shopify, Coinbase, Telsa, Starlink, Eightsleep, and more
-- **Expo Router** - File-based routing system for React Native with support for web, server functions and SSR
-- **TypeScript** - Type-safe JavaScript
-- **React Query** - Server state management
-- **Lucide React Native** - Beautiful icons
-
-## How can I test my app?
-
-### **On your phone (Recommended)**
-
-1. **iOS**: Download the [Rork app from the App Store](https://apps.apple.com/app/rork) or [Expo Go](https://apps.apple.com/app/expo-go/id982107779)
-2. **Android**: Download the [Expo Go app from Google Play](https://play.google.com/store/apps/details?id=host.exp.exponent)
-3. Run `bun run start` and scan the QR code from your development server
-
-### **In your browser**
-
-Run `bun start-web` to test in a web browser. Note: The browser preview is great for quick testing, but some native features may not be available.
-
-### **iOS Simulator / Android Emulator**
-
-You can test Rork apps in Expo Go or Rork iOS app. You don't need XCode or Android Studio for most features.
-
-**When do you need Custom Development Builds?**
-
-- Native authentication (Face ID, Touch ID, Apple Sign In)
-- In-app purchases and subscriptions
-- Push notifications
-- Custom native modules
-
-Learn more: [Expo Custom Development Builds Guide](https://docs.expo.dev/develop/development-builds/introduction/)
-
-If you have XCode (iOS) or Android Studio installed:
-
-```bash
-# iOS Simulator
-bun run start -- --ios
-
-# Android Emulator
-bun run start -- --android
-```
-
-## How can I deploy this project?
-
-### **Publish to App Store (iOS)**
-
-1. **Install EAS CLI**:
-
-   ```bash
-   bun i -g @expo/eas-cli
-   ```
-
-2. **Configure your project**:
-
-   ```bash
-   eas build:configure
-   ```
-
-3. **Build for iOS**:
-
-   ```bash
-   eas build --platform ios
-   ```
-
-4. **Submit to App Store**:
-   ```bash
-   eas submit --platform ios
-   ```
-
-For detailed instructions, visit [Expo's App Store deployment guide](https://docs.expo.dev/submit/ios/).
-
-### **Publish to Google Play (Android)**
-
-1. **Build for Android**:
-
-   ```bash
-   eas build --platform android
-   ```
-
-2. **Submit to Google Play**:
-   ```bash
-   eas submit --platform android
-   ```
-
-For detailed instructions, visit [Expo's Google Play deployment guide](https://docs.expo.dev/submit/android/).
-
-### **Publish as a Website**
-
-Your React Native app can also run on the web:
-
-1. **Build for web**:
-
-   ```bash
-   eas build --platform web
-   ```
-
-2. **Deploy with EAS Hosting**:
-   ```bash
-   eas hosting:configure
-   eas hosting:deploy
-   ```
-
-Alternative web deployment options:
-
-- **Vercel**: Deploy directly from your GitHub repository
-- **Netlify**: Connect your GitHub repo to Netlify for automatic deployments
-
-## App Features
-
-This template includes:
-
-- **Cross-platform compatibility** - Works on iOS, Android, and Web
-- **File-based routing** with Expo Router
-- **Tab navigation** with customizable tabs
-- **Modal screens** for overlays and dialogs
-- **TypeScript support** for better development experience
-- **Async storage** for local data persistence
-- **Vector icons** with Lucide React Native
+---
 
 ## Project Structure
 
 ```
-├── app/                    # App screens (Expo Router)
-│   ├── (tabs)/            # Tab navigation screens
-│   │   ├── _layout.tsx    # Tab layout configuration
-│   │   └── index.tsx      # Home tab screen
-│   ├── _layout.tsx        # Root layout
-│   ├── modal.tsx          # Modal screen example
-│   └── +not-found.tsx     # 404 screen
-├── assets/                # Static assets
-│   └── images/           # App icons and images
-├── constants/            # App constants and configuration
-├── app.json             # Expo configuration
-├── package.json         # Dependencies and scripts
-└── tsconfig.json        # TypeScript configuration
+expo/
+├── app/                          # Expo Router screens
+│   ├── _layout.tsx               # Root layout — QueryClient, StorageProvider, AuthProvider
+│   ├── index.tsx                 # Entry — routes to auth or role-based home
+│   ├── auth.tsx                  # OTP login + role selection (Customer/Milkman)
+│   ├── +not-found.tsx            # 404 screen
+│   ├── +native-intent.tsx        # Native intent handler
+│   ├── (customer)/               # Customer tab group
+│   │   ├── _layout.tsx           # Customer tab navigator
+│   │   ├── home.tsx              # Customer home dashboard
+│   │   ├── find-milkmen.tsx      # Browse Chandigarh dairies + order
+│   │   ├── subscriptions.tsx     # Manage subscriptions
+│   │   ├── track-delivery.tsx    # Live Swiggy-style delivery tracking
+│   │   └── profile.tsx           # Customer profile & addresses
+│   └── (milkman)/                # Milkman tab group
+│       ├── _layout.tsx           # Milkman tab navigator
+│       ├── dashboard.tsx         # Business overview & stats
+│       ├── deliveries.tsx        # Today's deliveries + map
+│       ├── customers.tsx         # Customer list & subscriptions
+│       ├── inventory.tsx         # Product & stock management
+│       └── reports.tsx           # Finance & revenue reports
+├── components/
+│   ├── MapView.tsx               # Web/native map wrapper (Leaflet on web, react-native-maps on native)
+│   ├── Marker.tsx                # Custom map marker
+│   └── RouteMapView.tsx          # Map with route polyline + vehicle animation
+├── constants/
+│   ├── chandigarh-dairies.ts     # Seeded Chandigarh dairy farms data
+│   └── colors.ts                 # App color palette
+├── contexts/
+│   ├── AuthContext.tsx           # OTP auth, session, profile (createContextHook)
+│   └── StorageContext.tsx        # AsyncStorage wrapper
+├── lib/
+│   ├── firebase.ts               # Firebase init (Auth, Firestore, Storage)
+│   ├── dairy-service.ts          # Dairy CRUD + delivery tracking service (mock/Firebase)
+│   └── location-service.ts       # GPS, geocoding, routing, distance calc
+├── types/
+│   └── index.ts                  # All TypeScript domain models
+├── docs/
+│   └── LOCATION_SERVICES_GUIDE.md # How to use location/routing APIs
+├── assets/images/                # App icon, splash, favicon
+├── app.json                      # Expo config (permissions, plugins, scheme)
+├── package.json
+├── tsconfig.json
+├── metro.config.js
+├── babel.config.js
+└── eslint.config.js
 ```
 
-## Custom Development Builds
+---
 
-For advanced native features, you'll need to create a Custom Development Build instead of using Expo Go.
+## Getting Started
 
-### **When do you need a Custom Development Build?**
+### Prerequisites
 
-- **Native Authentication**: Face ID, Touch ID, Apple Sign In, Google Sign In
-- **In-App Purchases**: App Store and Google Play subscriptions
-- **Advanced Native Features**: Third-party SDKs, platform-specifc features (e.g. Widgets on iOS)
-- **Background Processing**: Background tasks, location tracking
+- Node.js (via [nvm](https://github.com/nvm-sh/nvm))
+- [Bun](https://bun.sh/docs/installation)
+- Expo Go (for device testing) or the Rork app
 
-### **Creating a Custom Development Build**
+### Install & Run
 
 ```bash
-# Install EAS CLI
-bun i -g @expo/eas-cli
+# Clone
+git clone <YOUR_GIT_URL>
+cd <YOUR_PROJECT_NAME>/expo
 
-# Configure your project for development builds
-eas build:configure
+# Install dependencies
+bun install
 
-# Create a development build for your device
-eas build --profile development --platform ios
-eas build --profile development --platform android
+# Start web preview (auto-reload)
+bun run start-web
 
-# Install the development build on your device and start developing
-bun start --dev-client
+# Start native dev server (then press 'i' for iOS or 'a' for Android)
+bun run start
 ```
 
-**Learn more:**
+### Test on a device
 
-- [Development Builds Introduction](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Creating Development Builds](https://docs.expo.dev/develop/development-builds/create-a-build/)
-- [Installing Development Builds](https://docs.expo.dev/develop/development-builds/installation/)
+1. Install **Expo Go** from the App Store / Google Play.
+2. Run `bun run start`.
+3. Scan the QR code with your phone camera.
 
-## Advanced Features
+---
 
-### **Add a Database**
+## Environment Variables
 
-Integrate with backend services:
+These are injected by the Rork platform and are already present in the build. They are public (client-safe) and prefixed with `EXPO_PUBLIC_`:
 
-- **Supabase** - PostgreSQL database with real-time features
-- **Firebase** - Google's mobile development platform
-- **Custom API** - Connect to your own backend
+| Variable | Purpose |
+|----------|---------|
+| `EXPO_PUBLIC_PROJECT_ID` | Rork project identifier |
+| `EXPO_PUBLIC_RORK_API_BASE_URL` | Rork API base URL |
+| `EXPO_PUBLIC_RORK_APP_KEY` | Rork app key |
+| `EXPO_PUBLIC_RORK_AUTH_URL` | Rork auth endpoint |
+| `EXPO_PUBLIC_RORK_FUNCTIONS_URL` | Cloud functions URL |
+| `EXPO_PUBLIC_RORK_TOOLKIT_SECRET_KEY` | Rork toolkit secret |
+| `EXPO_PUBLIC_TEAM_ID` | Rork team ID |
+| `EXPO_PUBLIC_TOOLKIT_URL` | Rork toolkit URL |
 
-### **Add Authentication**
+Read them in-app with `process.env.EXPO_PUBLIC_VARIABLE_NAME`.
 
-Implement user authentication:
+> Firebase config is currently set to demo values in `lib/firebase.ts`. Replace with your real Firebase project credentials before going to production.
 
-**Basic Authentication (works in Expo Go):**
+---
 
-- **Expo AuthSession** - OAuth providers (Google, Facebook, Apple) - [Guide](https://docs.expo.dev/guides/authentication/)
-- **Supabase Auth** - Email/password and social login - [Integration Guide](https://supabase.com/docs/guides/getting-started/tutorials/with-expo-react-native)
-- **Firebase Auth** - Comprehensive authentication solution - [Setup Guide](https://docs.expo.dev/guides/using-firebase/)
+## Authentication Flow
 
-**Native Authentication (requires Custom Development Build):**
+Implemented in `contexts/AuthContext.tsx` using `@nkzw/create-context-hook`.
 
-- **Apple Sign In** - Native Apple authentication - [Implementation Guide](https://docs.expo.dev/versions/latest/sdk/apple-authentication/)
-- **Google Sign In** - Native Google authentication - [Setup Guide](https://docs.expo.dev/guides/google-authentication/)
+1. **Role selection** — User picks Customer or Milkman on the auth screen.
+2. **Phone number** — User enters a 10–15 digit phone number.
+3. **OTP** — `sendOTP()` generates a 6-digit code (demo mode; wire to Firebase Auth / SMS provider for production).
+4. **Verify** — `verifyOTP()` validates the OTP, creates a `User` + profile, and persists the session in AsyncStorage under `demo_user` / `demo_profile`.
+5. **Routing** — On app launch, `index.tsx` checks the stored session and routes to `(customer)` or `(milkman)`, otherwise to `auth`.
+6. **Sign out** — `signOut()` clears storage and returns to the auth screen.
 
-### **Add Push Notifications**
+Input validation: phone length 10–15, OTP must be 6 digits.
 
-Send notifications to your users:
+---
 
-- **Expo Notifications** - Cross-platform push notifications
-- **Firebase Cloud Messaging** - Advanced notification features
+## Customer App
 
-### **Add Payments**
+### Home (`home.tsx`)
+- Greeting + active delivery card (tap to track)
+- Quick actions: Find Milkmen, My Subscriptions, Track Delivery
+- Recent orders
 
-Monetize your app:
+### Find Milkmen (`find-milkmen.tsx`)
+- Loads Chandigarh dairies from `DairyService` (mock or Firebase)
+- Sorted by distance from the customer's live GPS location
+- Each card: business name, owner, rating, distance, products, price range, working hours
+- Tap a dairy → view products → place a subscription or one-time order
+- Uses `LocationService.getCurrentLocation()` to anchor the list
 
-**Web & Credit Card Payments (works in Expo Go):**
+### Subscriptions (`subscriptions.tsx`)
+- Active / paused / cancelled tabs
+- Daily, alternate-day, weekly, or custom frequency
+- Pause, resume, cancel actions
+- Price per delivery and next delivery date
 
-- **Stripe** - Credit card payments and subscriptions - [Expo + Stripe Guide](https://docs.expo.dev/guides/using-stripe/)
-- **PayPal** - PayPal payments integration - [Setup Guide](https://developer.paypal.com/docs/checkout/mobile/react-native/)
+### Track Delivery (`track-delivery.tsx`) — Swiggy-style
+- Full-screen map with the milkman's live location marker
+- Polyline route from milkman → customer address
+- Live distance remaining and ETA
+- Status progression: `preparing` → `out_for_delivery` → `nearby` → `arrived` → `delivered`
+- Call / message the milkman buttons
+- Animated progress and status banners
 
-**Native In-App Purchases (requires Custom Development Build):**
+### Profile (`profile.tsx`)
+- Name, email, profile photo
+- Multiple saved addresses (Home, Office, etc.) with geo-coordinates
+- Sign out
 
-- **RevenueCat** - Cross-platform in-app purchases and subscriptions - [Expo Integration Guide](https://www.revenuecat.com/docs/expo)
-- **Expo In-App Purchases** - Direct App Store/Google Play integration - [Implementation Guide](https://docs.expo.dev/versions/latest/sdk/in-app-purchases/)
+---
 
-**Paywall Optimization:**
+## Milkman App
 
-- **Superwall** - Paywall A/B testing and optimization - [React Native SDK](https://docs.superwall.com/docs/react-native)
-- **Adapty** - Mobile subscription analytics and paywalls - [Expo Integration](https://docs.adapty.io/docs/expo)
+### Dashboard (`dashboard.tsx`)
+- Today's stats: deliveries (pending/total), revenue, active customers, low-stock alerts
+- Quick navigation to Deliveries, Customers, Inventory, Reports
+- Business profile summary
 
-## I want to use a custom domain - is that possible?
+### Deliveries (`deliveries.tsx`)
+- Today's delivery list with customer name, phone, address, products, time slot
+- Map view with all delivery pins
+- Status updates: pending → out for delivery → delivered / not home / cancelled
+- Proof-of-delivery photo capture
+- Navigate-to-customer (opens maps app)
 
-For web deployments, you can use custom domains with:
+### Customers (`customers.tsx`)
+- Full customer list with active subscriptions and order history
+- Contact (call/SMS) shortcuts
+- Subscription details per customer
 
-- **EAS Hosting** - Custom domains available on paid plans
-- **Netlify** - Free custom domain support
-- **Vercel** - Custom domains with automatic SSL
+### Inventory (`inventory.tsx`)
+- Product list: name, category (Milk, Curd, Paneer, Ghee, Lassi, etc.), unit, stock, prices
+- Low-stock threshold alerts
+- Add / edit / deactivate products
+- Cost price vs selling price for margin tracking
 
-For mobile apps, you'll configure your app's deep linking scheme in `app.json`.
+### Reports (`reports.tsx`)
+- Revenue bar chart (daily/weekly/monthly)
+- Expense tracking by category (procurement, fuel, salary, maintenance, packaging, equipment)
+- Profit/Loss calculation
+- Top products and top customers
+- Export / download summary
+
+---
+
+## Real-Time Delivery Tracking (Swiggy-style)
+
+The flagship feature, in `app/(customer)/track-delivery.tsx` + `lib/dairy-service.ts` + `lib/location-service.ts`.
+
+**How it works:**
+1. When a delivery is `out_for_delivery`, `DairyService` exposes an `ActiveDelivery` record with `pickupLocation`, `deliveryLocation`, and a live `currentLocation`.
+2. The track-delivery screen polls the milkman's `currentLocation` and re-centers the map.
+3. `LocationService.calculateDistance()` computes the remaining straight-line (Haversine) distance between the milkman and the customer.
+4. ETA is estimated from distance + average speed; status auto-advances as the milkman gets closer (`nearby` < 1 km, `arrived` < 100 m).
+5. The route polyline is drawn via the OSRM routing API (`router.project-osrm.org`) — same approach as the Python `DeliveryRouterUI` reference design.
+6. The customer can call or message the milkman directly from the tracking screen.
+
+**Demo mode:** When no live milkman GPS is available, the screen simulates movement along the route so the tracking experience is fully visible for presentations.
+
+---
+
+## Maps & Location Services
+
+Implemented in `lib/location-service.ts` (singleton `LocationService`).
+
+### Capabilities
+- **Permissions** — `requestForegroundPermissionsAsync()` (and background on Android/iOS where enabled).
+- **Current location** — `getCurrentLocation()` returns `{ latitude, longitude, address }`.
+- **Geocoding** — `geocodeAddress(address)` → coordinates via Nominatim/OpenStreetMap.
+- **Reverse geocoding** — `reverseGeocode(coords)` → human-readable address.
+- **Routing** — `calculateRoute(origin, destination)` → `{ distance, duration, coordinates[] }` via OSRM.
+- **Distance** — `calculateDistance(a, b)` — Haversine formula in km.
+
+### Map components
+- `components/MapView.tsx` — Cross-platform map. Uses `react-native-maps` on native and a Leaflet-based web fallback (so the web preview works without the native-only `react-native-maps` modules that break Metro on web).
+- `components/Marker.tsx` — Custom-styled markers (pickup, delivery, user, vehicle).
+- `components/RouteMapView.tsx` — Map + route polyline + animated vehicle marker moving along the route (mirrors the Python `startAnimation()` logic).
+
+### Default location
+The app defaults to **Chandigarh** (`30.7333, 76.7794`) per `constants/chandigarh-dairies.ts` → `CHANDIGARH_CENTER`. If the user grants location permission, the map recenters to their live GPS.
+
+> A full guide lives in `docs/LOCATION_SERVICES_GUIDE.md`.
+
+---
+
+## Backend Integration (Firebase)
+
+`lib/firebase.ts` initializes Firebase App, Auth, Firestore, and Storage. `lib/dairy-service.ts` is the service layer.
+
+### DairyService (singleton)
+- `setUseMockData(boolean)` — toggle between mock Chandigarh data and live Firestore.
+- `getAllDairies(userLocation?)` — list dairies, optionally sorted by distance.
+- `getDairy(id)` — single dairy detail.
+- `getActiveDeliveries(customerId)` — live deliveries for tracking.
+- `getDelivery(id)` / `updateDeliveryStatus()` — delivery lifecycle.
+- `subscribeToDairy(dairyId)` / `getSubscriptions()` — subscription CRUD.
+- `createOrder()` — one-time order.
+
+**Currently running in mock mode** with seeded Chandigarh dairies. To switch to Firebase:
+1. Replace the demo config in `lib/firebase.ts` with your real Firebase project credentials.
+2. Call `DairyService.getInstance().setUseMockData(false)` at app startup.
+3. Create Firestore collections matching the `types/index.ts` models: `users`, `customers`, `milkmen`, `products`, `subscriptions`, `deliveries`, `orders`, `payments`, `expenses`, `reviews`, `chats`, `messages`, `notifications`.
+
+---
+
+## Data Models
+
+All domain models are in `types/index.ts`. Key types:
+
+| Type | Description |
+|------|-------------|
+| `User` | Base user: id, phone, userType |
+| `CustomerProfile` | Customer: name, email, addresses[] |
+| `MilkmanProfile` | Dairy: businessName, serviceArea, workingHours, bankDetails, rating |
+| `Address` | Label, fullAddress, landmark, GeoPoint |
+| `GeoPoint` | { latitude, longitude } |
+| `Product` | Dairy product with stock, prices, category |
+| `Subscription` | Recurring delivery (daily/alternate/weekly/custom) |
+| `Delivery` | Single delivery instance with status & payment |
+| `Order` | One-time order with items[] |
+| `Payment` | Payment record (cash/upi/card/wallet) |
+| `Expense` | Business expense by category |
+| `Review` | Customer rating + comment |
+| `Chat` / `Message` | In-app messaging |
+| `Notification` | In-app notifications |
+
+Enums: `UserType`, `ProductCategory`, `SubscriptionFrequency`, `SubscriptionStatus`, `DeliveryStatus`, `PaymentStatus`, `OrderStatus`, `PaymentMethod`, `ExpenseCategory`, `NotificationType`.
+
+---
+
+## State Management
+
+- **Server state** — `@tanstack/react-query` (`QueryClientProvider` is the top-level provider in `app/_layout.tsx`). Use `useQuery({ queryKey, queryFn })` for fetching and `useMutation` for writes.
+- **Auth + session** — `contexts/AuthContext.tsx` via `@nkzw/create-context-hook` (typed `useAuth()` hook). Persisted to AsyncStorage.
+- **Storage** — `contexts/StorageContext.tsx` wraps AsyncStorage; access only via the context hook, never directly.
+- **Local UI state** — `useState` within screens.
+
+Provider nesting (outermost → innermost): `QueryClientProvider` → `StorageProvider` → `AuthProvider` → `GestureHandlerRootView` → `RootLayoutNav`.
+
+---
+
+## Scripts
+
+```bash
+bun run start          # Start native dev server (Rork CLI)
+bun run start-web      # Start web preview
+bun run start-web-dev  # Web preview with debug logging
+bun run lint           # ESLint (expo lint)
+```
+
+---
+
+## Building & Deploying
+
+### App Store (iOS)
+```bash
+bun i -g @expo/eas-cli
+eas build:configure
+eas build --platform ios
+eas submit --platform ios
+```
+
+### Google Play (Android)
+```bash
+eas build --platform android
+eas submit --platform android
+```
+
+### Web
+```bash
+eas build --platform web
+# or deploy dist/ to Vercel / Netlify
+```
+
+See the [Expo deployment docs](https://docs.expo.dev/submit/) for details.
+
+---
+
+## Configuration Files
+
+- **`app.json`** — Expo config. App name `MilkConnect App`, slug `milkconnect-app`, portrait orientation, new architecture enabled. Location permissions configured for iOS (`NSLocationWhenInUseUsageDescription`, background location mode) and Android (`ACCESS_FINE_LOCATION`, `ACCESS_BACKGROUND_LOCATION`, foreground service). `expo-location` plugin enabled with background location.
+- **`tsconfig.json`** — Strict TypeScript, path alias `@/*` → root.
+- **`metro.config.js`** — Resolves web/native platform splits for `react-native-maps`.
+- **`babel.config.js`** — Expo babel preset.
+
+---
 
 ## Troubleshooting
 
-### **App not loading on device?**
+### `react-native-maps` import error on web
+This is expected — `react-native-maps` is native-only. The `MapView.tsx` component platform-splits to a Leaflet-based web map so the web preview keeps working. If you see `Importing native-only module ... on web`, make sure you're importing from `@/components/MapView`, not directly from `react-native-maps`.
 
-1. Make sure your phone and computer are on the same WiFi network
-2. Try using tunnel mode: `bun start -- --tunnel`
-3. Check if your firewall is blocking the connection
+### App not loading on device
+1. Phone and computer on the same WiFi.
+2. Try tunnel mode: `bun start -- --tunnel`.
+3. Check firewall settings.
 
-### **Build failing?**
+### Build failing
+1. Clear cache: `bunx expo start --clear`.
+2. Reinstall: `rm -rf node_modules && bun install`.
+3. See [Expo's troubleshooting guide](https://docs.expo.dev/troubleshoot/).
 
-1. Clear your cache: `bunx expo start --clear`
-2. Delete `node_modules` and reinstall: `rm -rf node_modules && bun install`
-3. Check [Expo's troubleshooting guide](https://docs.expo.dev/troubleshooting/build-errors/)
+### Sign out not working
+The sign-out flow lives in `AuthContext.signOut()`. It clears `demo_user` and `demo_profile` from AsyncStorage and redirects to `/auth`. If it fails, ensure `StorageProvider` is mounted above the screen calling `useAuth()`.
 
-### **Need help with native features?**
+### Maps not showing
+- Confirm location permission is granted (the app requests it on first use).
+- On web, ensure you're using the `MapView` wrapper, not `react-native-maps` directly.
+- Default center is Chandigarh; the map recenter to your GPS only after permission is granted.
 
-- Check [Expo's documentation](https://docs.expo.dev/) for native APIs
-- Browse [React Native's documentation](https://reactnative.dev/docs/getting-started) for core components
-- Visit [Rork's FAQ](https://rork.com/faq) for platform-specific questions
+---
 
-## About Rork
+## Roadmap
 
-Rork builds fully native mobile apps using React Native and Expo - the same technology stack used by Discord, Shopify, Coinbase, Instagram, and nearly 30% of the top 100 apps on the App Store.
+- [ ] Wire OTP to a real SMS provider (Firebase Auth / Twilio / MSG91)
+- [ ] Move fully from mock data to Firebase Firestore
+- [ ] Real-time milkman GPS streaming via Firestore `onSnapshot`
+- [ ] In-app chat between customer and milkman
+- [ ] Online payments (Razorpay / Stripe)
+- [ ] Push notifications via Expo Notifications
+- [ ] Admin/web dashboard for dairy analytics
+- [ ] Multi-city expansion beyond Chandigarh
 
-Your Rork app is production-ready and can be published to both the App Store and Google Play Store. You can also export your app to run on the web, making it truly cross-platform.
+---
